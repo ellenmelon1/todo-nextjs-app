@@ -20,12 +20,10 @@ export const listTodos = async () => {
         const data = await documentClient.send(command)
         const todos = (data.Items?.map((item) => {
             return {
-                params: {
                     id: item.sk,
                     title: item.title,
                     description: item.description,
                     completed: item.completed
-                }
             }
         }))
         console.log(todos)
