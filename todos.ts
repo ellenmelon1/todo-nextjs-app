@@ -1,13 +1,8 @@
 import {QueryCommand, GetCommand} from '@aws-sdk/lib-dynamodb'
-import {unmarshall} from '@aws-sdk/util-dynamodb'
 import {documentClient} from './dynamodbclient'
 import { Todo } from './types'
 
-interface Item {
-    params: Todo
-}
-
-export const listTodos = async () => {
+export const listTodos = async (): Promise<Todo[]|[]> => {
     const command = new QueryCommand({
         TableName:process.env.TABLE_NAME,
         KeyConditionExpression: 'pk = :pk',
@@ -26,26 +21,25 @@ export const listTodos = async () => {
                     completed: item.completed
             }
         }))
-        console.log(todos)
-        return todos
+        return todos || []
     } catch (error) {
         console.log(error)
-        return error;
+        throw error
     }
 }
 
-// export const getAllTodoIds = async () => {
-//     const data = await listTodos();
-//         return data.Items?.map((item: Item) => {
-//             return {
-//                 params: {
-//                     id: item.params.sk
-//                 }
-//             }
-//         })
-//     }
+export const getTodoIds = async () => {
+    const data = await listTodos();
+        return data.map((todo: Todo) => {
+            return {
+                params: {
+                    id: todo.id
+                }
+            }
+        })
+    }
 
-export const getTodoData = async (id: string) => {
+export const getTodoData = async (id: string): Promise<Todo> => {
     const command = new GetCommand({
         TableName:process.env.TABLE_NAME,
         Key:{
@@ -55,10 +49,15 @@ export const getTodoData = async (id: string) => {
     })
     try {
         const response = await documentClient.send(command);
-        return {
-            ...response.Item
-        }
+            const {completed, title, description} = response.Item!
+                return {
+                    id,
+                    completed,
+                    title,
+                    description
+                }
+
     } catch (error){
-        return error
+        throw error
     }
 }

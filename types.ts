@@ -1,5 +1,5 @@
 export interface Todo {
-    pk: string;
+    pk?: string;
     id: string;
     title: string;
     description: string;
