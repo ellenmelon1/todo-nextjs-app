@@ -1,6 +1,8 @@
+import { BackgroundContainer, MainContainer} from '@/bits/Containers';
+import { MainHeading } from '@/bits/MainHeading';
+import TodoCard from '@/components/TodoCard';
 import { listTodos } from '@/todos'
 import { Todo } from '@/types'
-import Link from 'next/link'
 
 export const getStaticProps = async () => {
   try {
@@ -17,19 +19,17 @@ export const getStaticProps = async () => {
       }
     }
   }
-
 }
 
 export default function Home({todos}: {todos: Todo[]}) {
   return (
-<div>
-  {todos.map(({id, title, description}) => {
-    return (
-      <div key={id}>
-        <Link href={`${id}`}>{title}</Link>
-        </div>
-    )
-  })}
-</div>
+    <BackgroundContainer>
+      <MainContainer>
+        <MainHeading>Todo List:</MainHeading>
+        {todos.map(({id, title, description, completed}) => {
+          return <TodoCard key={id} id={id} title={title} description={description} completed={completed} />
+          })}
+      </MainContainer>
+    </BackgroundContainer>
   )
 }

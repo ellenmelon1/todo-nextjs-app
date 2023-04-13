@@ -3,6 +3,7 @@ export interface Todo {
     id: string;
     title: string;
     description: string;
-    completed: boolean;
+    completed: string;
+    s3Reference?: string;
 }
 

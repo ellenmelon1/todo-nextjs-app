@@ -1,0 +1,28 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+    font-size: 0.9em;
+    margin: 0.5em;
+}
+
+p, a {
+    font-size: 0.7em;
+    margin: 0.25em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}

@@ -1,6 +1,6 @@
 import { Todo } from '@/types';
 import { getTodoIds, getTodoData} from '../todos';
-import { GetStaticProps, GetStaticPaths, GetServerSideProps, NextPageContext } from 'next'
+import { GetStaticProps } from 'next'
 
 export const getStaticPaths = async () => {
     const paths = await getTodoIds();

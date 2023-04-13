@@ -1,6 +1,25 @@
 import {QueryCommand, GetCommand} from '@aws-sdk/lib-dynamodb'
 import {documentClient} from './dynamodbclient'
 import { Todo } from './types'
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({ region: 'eu-west-2' });
+
+// never got used, because public read access so can just use url
+export const getTodoS3Image = async (s3Reference: string): Promise<any> => {
+        try {
+            const command = new GetObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: s3Reference });
+            const response = await s3.send(command);
+            console.log(response.Body)
+        } catch (error){
+            console.error(error);
+            throw new Error("Failed to fetch object from S3");
+        }
+    }
+
+    // getTodoS3Image('manu-schwendener-DSwBHyWKiVw-unsplash.jpg')
+
+
 
 export const listTodos = async (): Promise<Todo[]|[]> => {
     const command = new QueryCommand({
