@@ -1,25 +1,39 @@
 import {QueryCommand, GetCommand} from '@aws-sdk/lib-dynamodb'
 import {documentClient} from './dynamodbclient'
 import { Todo } from './types'
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-
-const s3 = new S3Client({ region: 'eu-west-2' });
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 // never got used, because public read access so can just use url
 export const getTodoS3Image = async (s3Reference: string): Promise<any> => {
+    const command = new GetObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: s3Reference });
         try {
-            const command = new GetObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: s3Reference });
             const response = await s3.send(command);
             console.log(response.Body)
         } catch (error){
             console.error(error);
-            throw new Error("Failed to fetch object from S3");
         }
     }
 
-    // getTodoS3Image('manu-schwendener-DSwBHyWKiVw-unsplash.jpg')
+export interface MyComponentProps {
+    s3Reference: string;
+    fileType: string;
+    file: any;
+}
+// has to be declared and used in file, else it's a PITA:
 
-
+// export const postTodoS3Image = async (s3Reference: string, fileType: string, file: any): Promise<any> => {
+//     try {
+//      const response = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/getSignedUrl', {"s3Reference": s3Reference, "fileType": fileType})
+     
+//      const result = await axios.put(response.data.url, file,{
+//          headers: {
+//            'Content-Type': fileType,
+//          }
+//        })
+//        console.log("success!")
+//     } catch (error){
+//      console.log(error)
+//     }}
 
 export const listTodos = async (): Promise<Todo[]|[]> => {
     const command = new QueryCommand({

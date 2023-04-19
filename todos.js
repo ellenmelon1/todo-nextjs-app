@@ -36,46 +36,62 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTodoData = exports.getTodoIds = exports.listTodos = exports.getTodoS3Image = void 0;
+exports.getTodoData = exports.getTodoIds = exports.listTodos = exports.postTodoS3Image = exports.getTodoS3Image = void 0;
 var lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
 var dynamodbclient_1 = require("./dynamodbclient");
 var client_s3_1 = require("@aws-sdk/client-s3");
+var s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 var s3 = new client_s3_1.S3Client({ region: 'eu-west-2' });
+// never got used, because public read access so can just use url
 var getTodoS3Image = function (s3Reference) { return __awaiter(void 0, void 0, void 0, function () {
     var command, response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                console.log("bucket name: ", process.env.BUCKET_NAME);
                 command = new client_s3_1.GetObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: s3Reference });
-                return [4 /*yield*/, s3.send(command)];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, s3.send(command)];
+            case 2:
                 response = _a.sent();
                 console.log(response.Body);
-                return [3 /*break*/, 3];
-            case 2:
+                return [3 /*break*/, 4];
+            case 3:
                 error_1 = _a.sent();
                 console.error(error_1);
-                throw new Error("Failed to fetch object from S3");
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.getTodoS3Image = getTodoS3Image;
-(0, exports.getTodoS3Image)('manu-schwendener-DSwBHyWKiVw-unsplash.jpg');
-// const getObject = async (bucketName: string, objectKey: string) => {
-//   try {
-//     const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
-//     const response = await s3.send(command);
-//     return response.Body;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("Failed to fetch object from S3");
-//   }
-// };
+var postTodoS3Image = function (s3Reference, image) { return __awaiter(void 0, void 0, void 0, function () {
+    var command, signedUrl, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log("bucket: ", process.env.NEXT_PUBLIC_BUCKET_NAME);
+                command = new client_s3_1.PutObjectCommand({ Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME, Key: s3Reference });
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, (0, s3_request_presigner_1.getSignedUrl)(s3, command, { expiresIn: 3600 })];
+            case 2:
+                signedUrl = _a.sent();
+                console.log("signedUrl", signedUrl);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                console.error(error_2);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.postTodoS3Image = postTodoS3Image;
 var listTodos = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var command, data, todos, error_2;
+    var command, data, todos, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -103,9 +119,9 @@ var listTodos = function () { return __awaiter(void 0, void 0, void 0, function 
                 }));
                 return [2 /*return*/, todos || []];
             case 3:
-                error_2 = _b.sent();
-                console.log(error_2);
-                throw error_2;
+                error_3 = _b.sent();
+                console.log(error_3);
+                throw error_3;
             case 4: return [2 /*return*/];
         }
     });
@@ -130,7 +146,7 @@ var getTodoIds = function () { return __awaiter(void 0, void 0, void 0, function
 }); };
 exports.getTodoIds = getTodoIds;
 var getTodoData = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var command, response, _a, completed, title, description, error_3;
+    var command, response, _a, completed, title, description, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -155,8 +171,8 @@ var getTodoData = function (id) { return __awaiter(void 0, void 0, void 0, funct
                         description: description
                     }];
             case 3:
-                error_3 = _b.sent();
-                throw error_3;
+                error_4 = _b.sent();
+                throw error_4;
             case 4: return [2 /*return*/];
         }
     });

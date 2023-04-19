@@ -21,8 +21,10 @@
   },
   "dependencies": {
     "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
+    "@types/express": "^4.17.17",
     "aws-cdk-lib": "2.70.0",
     "constructs": "^10.0.0",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "supertest": "^6.3.3"
   }
 }

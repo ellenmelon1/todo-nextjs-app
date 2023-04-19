@@ -1,5 +1,3 @@
-// run this in the terminal from project root: npx ts-node ./activate.ts
-
 const run = () => {
     console.log(`export AWS_PROFILE="sandbox-root"`)
     console.log(`export TABLE_NAME="CdkStack-TodoListTable211CBB24C-1UALPOOAAZNXT"`)
