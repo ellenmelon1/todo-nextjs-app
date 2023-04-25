@@ -2,6 +2,7 @@ import {QueryCommand, GetCommand} from '@aws-sdk/lib-dynamodb'
 import {documentClient} from './dynamodbclient'
 import { Todo } from './types'
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import axios from 'axios'
 
 // never got used, because public read access so can just use url
 export const getTodoS3Image = async (s3Reference: string): Promise<any> => {
@@ -94,3 +95,15 @@ export const getTodoData = async (id: string): Promise<Todo> => {
         throw error
     }
 }
+
+  // helped when setting up the api gateway
+  export const fetchMessage = async () => {
+    axios.get('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/')
+    .then(response => {
+      console.log(response.data)
+      return response.data;
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }

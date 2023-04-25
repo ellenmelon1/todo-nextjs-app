@@ -1,6 +1,8 @@
 const express = require('express');
-const {S3Client, PutObjectCommand, GetObjectCommand} = require('@aws-sdk/client-s3');
+const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3');
 const  { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { documentClient } from "./dynamodbclient";
 
 const app = express();
 app.use(express.json());
@@ -27,5 +29,44 @@ app.post('/getSignedUrl', async (req: any, res: any) => {
         throw new Error(error as string);
     }
   })
+
+app.post('/todo', async (req: any, res: any) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    console.log("got into function")
+
+    const command = new PutCommand({TableName: process.env.TABLE_NAME, Item: {
+    pk: 'todo',
+    sk: req.body.sk,
+    title: req.body.title,
+    description: req.body.description,
+    completed: 'false'
+}})
+
+console.log("tablename: ", process.env.TABLE_NAME)
+
+const getCommand = new GetCommand({
+    TableName: process.env.TABLE_NAME,
+    Key:{
+        pk: 'todo',
+        sk: req.body.sk
+    }
+})
+
+try {
+    const putRequest = await documentClient.send(command)
+    console.log('returned from put request: ', putRequest)
+    
+    const getRequest = await documentClient.send(getCommand)
+
+    console.log("returned from function: ", getRequest)
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).json({todo: getRequest.Item});
+    
+} catch(error){
+    console.log(error);
+    return error;
+}
+})
 
   module.exports = app;

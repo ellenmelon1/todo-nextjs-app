@@ -1,13 +1,14 @@
 import { BackgroundContainer, MainContainer} from '@/bits/Containers';
 import { MainHeading } from '@/bits/MainHeading';
 import TodoCard from '@/components/TodoCard';
-import { listTodos} from '@/todos'
+import { fetchMessage, listTodos} from '@/todos'
 import { Todo } from '@/types'
 import axios from 'axios';
 import { useState } from 'react';
 import useSwr from 'swr'
 import FormData from 'form-data'
 import { File } from 'buffer';
+import CreateTodoCard from '@/components/CreateTodoCard';
 
 // can use swr to fetch data from api (e.g. https://github.com/vercel/next.js/tree/canary/examples/api-routes-rest
 
@@ -37,6 +38,7 @@ export const postTodoS3Image = async (s3Reference: string, fileType: string, fil
 export const getStaticProps = async () => {
   try {
     const todos = await listTodos();
+    // fetchMessage();
     return {
       props: {
         todos
@@ -51,26 +53,29 @@ export const getStaticProps = async () => {
   }
 }
 
-// helped when setting up the api gateway
-// const fetchMessage = async () => {
-//   axios.get('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/')
-//   .then(response => {
-//     console.log(response.data);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   });
-// }
-
 // useful for testing the lambda function
 
-// const getSignedUrl = async () => {
-//   try {
-//     const response = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/getSignedUrl', {"s3Reference": "please work?", "fileType": "image/png"})
-//   } catch (error){
-//     console.error(error);
-//   }
-// }
+const getSignedUrl = async () => {
+  try {
+    const response = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/getSignedUrl', {"s3Reference": "please work?", "fileType": "image/png"})
+    console.log(response)
+  } catch (error){
+    console.error(error);
+  }
+}
+const createTodo = async () => {
+try {
+  const todo = {
+      "sk": "10",
+      "title": "new",
+      "description": "new",
+  }
+const newTodo = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/todo', todo);
+console.log(newTodo)
+
+} catch (error) {
+  console.log(error)
+}}
 
 export default function Home({todos}: {todos: Todo[]}) {
   const [file, setFile] = useState<File | null>(null);
@@ -82,14 +87,18 @@ export default function Home({todos}: {todos: Todo[]}) {
     setFile(fileObj);
   }
 
+  const newTodoId = (todos.length+1).toString();
+
   return (
     <BackgroundContainer>
       <MainContainer>
+        <button onClick={getSignedUrl}>getSignedUrl</button>
+        <button onClick={createTodo}>create todo PRACTICE</button>
+        <button onClick={fetchMessage}>fetch message</button>
         <MainHeading>Todo List:</MainHeading>
-        {/* <button onClick={() => {fetchMessage()}}>fetch message</button>
-        <button onClick={()=> {getSignedUrl()}}>Get a signed url</button> */}
+        <CreateTodoCard id={newTodoId}/>
         <input type="file" onChange={(e)=>handleFileChange(e)}></input>
-        <button disabled={!file} onClick={() => {postTodoS3Image((todos.length+1).toString(), file!.type, file)}}>Upload image</button>
+        <button disabled={!file} onClick={() => {postTodoS3Image(newTodoId, file!.type, file)}}>Upload image</button>
         {todos.map(({id, title, description, completed}) => {
           return <TodoCard key={id} id={id} title={title} description={description} completed={completed} />
           })}

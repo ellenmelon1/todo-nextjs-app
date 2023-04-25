@@ -13,13 +13,18 @@ body {
 }
 
 h1 {
-    font-size: 0.9em;
+    font-size: 20px;
     margin: 0.5em;
 }
 
 p, a {
     font-size: 0.7em;
     margin: 0.25em;
+}
+
+label {
+  font-size: 18px;
+  margin-right: 20px;
 }
 
 a {

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { todoCardStyle } from "./cssStyles";
 
 // https://www.schemecolor.com/beautiful-light-colors.php
 
@@ -24,5 +25,19 @@ export const BackgroundContainer = styled.div`
     align-items: center;
     justify-content: center;
 `;
+
+export const TodoCardContainer = styled.div`
+    ${todoCardStyle}
+`;
+
+export const FormContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: left;`
+
+export const InputContainer = styled.div`
+padding: 0px;
+margin: 0px;
+`
 
 

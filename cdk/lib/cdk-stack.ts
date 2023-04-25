@@ -35,6 +35,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'lambda.handler',
       environment: {
         BUCKET_NAME: process.env.BUCKET_NAME || 'env variable not set',
+        TABLE_NAME: process.env.TABLE_NAME || 'env variable not set',
       },
   })
 
@@ -62,6 +63,6 @@ export class CdkStack extends cdk.Stack {
       })
     )
 
-    // UserUploadsBucket.grantReadWrite(lambdaFunction);
+    table.grantReadWriteData(lambdaFunction);
   } 
 }
