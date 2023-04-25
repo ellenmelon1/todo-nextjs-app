@@ -6,21 +6,32 @@ import { Todo } from '@/types'
 import axios from 'axios';
 import { useState } from 'react';
 import useSwr from 'swr'
+import FormData from 'form-data'
+import { File } from 'buffer';
 
 // can use swr to fetch data from api (e.g. https://github.com/vercel/next.js/tree/canary/examples/api-routes-rest
 
-export const postTodoS3Image = async (s3Reference: string, fileType: string, file: any): Promise<any> => {
+export const postTodoS3Image = async (s3Reference: string, fileType: string, file: File): Promise<any> => {
+
   try {
-   const response = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/getSignedUrl', {"s3Reference": s3Reference, "fileType": fileType})
+  const form = new FormData();
+  form.append('file', file);
+
+    await axios.post('/api/virusScan', form, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        }})
+
+   const signedUrl = await axios.post('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/getSignedUrl', {"s3Reference": s3Reference, "fileType": fileType})
    
-   const result = await axios.put(response.data.url, file,{
+   const result = await axios.put(signedUrl.data.url, file,{
        headers: {
          'Content-Type': fileType,
        }
      })
-     console.log("success!")
+     console.log("success: ", result);
   } catch (error){
-   console.log(error)
+   console.log(error);
   }}
 
 export const getStaticProps = async () => {
@@ -41,15 +52,15 @@ export const getStaticProps = async () => {
 }
 
 // helped when setting up the api gateway
-const fetchMessage = async () => {
-  axios.get('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/')
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.log(error);
-  });
-}
+// const fetchMessage = async () => {
+//   axios.get('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/')
+//   .then(response => {
+//     console.log(response.data);
+//   })
+//   .catch(error => {
+//     console.log(error);
+//   });
+// }
 
 // useful for testing the lambda function
 
@@ -67,6 +78,7 @@ export default function Home({todos}: {todos: Todo[]}) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileObj = event.target.files?.[0];
     if (!fileObj || !fileObj.type) return;
+    // bc/ 'buffer' file type and node.js file types are slightly different
     setFile(fileObj);
   }
 
