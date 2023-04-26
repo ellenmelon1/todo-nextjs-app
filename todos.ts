@@ -96,7 +96,7 @@ export const getTodoData = async (id: string): Promise<Todo> => {
     }
 }
 
-  // helped when setting up the api gateway
+  // helped when setting up the api gateway - but not when exported from here! Idk why. Works if exported from any folder in same level as 'pages', or its own file at root level... Just not here. Bizarre.
   export const fetchMessage = async () => {
     axios.get('https://k2w7488s0c.execute-api.eu-west-2.amazonaws.com/prod/')
     .then(response => {
